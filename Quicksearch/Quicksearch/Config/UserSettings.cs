@@ -20,6 +20,8 @@ namespace Quicksearch.Config
         public CloseBehavior CloseBehavior = CloseBehavior.CloseOnFocusLost;
         public string UICulture = CultureInfo.CurrentUICulture.Name;
 
+        public bool CloseEverythingOnExit = false;
+
 
         private bool _Autostart;
         [XmlIgnore]

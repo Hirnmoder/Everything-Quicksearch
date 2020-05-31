@@ -1,4 +1,5 @@
 ﻿using Quicksearch.Config;
+using Quicksearch.Properties;
 using Quicksearch.Util;
 using System;
 using System.Collections.Generic;
@@ -50,9 +51,26 @@ namespace Quicksearch.ViewModel
         internal void AddSettings()
         {
             this.Settings.Clear();
-            this.Settings.Add(new CloseBehaviorSetting("Close Behavior", () => App.Current.Settings.CloseBehavior, cb => App.Current.Settings.CloseBehavior = cb));
-            this.Settings.Add(new CultureSetting("Display Culture", () => App.Current.Settings.UICulture, c => App.Current.Settings.UICulture = c));
-            this.Settings.Add(new AutorunSetting("Start with Windows", () => App.Current.Settings.Autostart, a => App.Current.Settings.SetAutostart(a)));
+            this.Settings.Add(new MultiValueSetting<CloseBehavior>("Close Behavior",
+                                                                   () => App.Current.Settings.CloseBehavior,
+                                                                   cb => App.Current.Settings.CloseBehavior = cb,
+                                                                   SettingType.CloseBehavior,
+                                                                   Enum.GetValues(typeof(CloseBehavior)) as CloseBehavior[]));
+            this.Settings.Add(new MultiValueSetting<string>("Display Culture",
+                                                            () => App.Current.Settings.UICulture,
+                                                            c => App.Current.Settings.UICulture = c,
+                                                            SettingType.CultureInfo,
+                                                            CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c => c.Name).ToArray()));
+            this.Settings.Add(new MultiValueSetting<bool>("Start with Windows",
+                                                          () => App.Current.Settings.Autostart,
+                                                          a => App.Current.Settings.SetAutostart(a),
+                                                          SettingType.Autorun,
+                                                          new bool[] { true, false }));
+            this.Settings.Add(new MultiValueSetting<bool>("Close Everything with Quicksearch",
+                                                          () => App.Current.Settings.CloseEverythingOnExit,
+                                                          c => App.Current.Settings.CloseEverythingOnExit = c,
+                                                          SettingType.CloseEverythingOnExit,
+                                                          new bool[] { true, false }));
         }
 
         private void Cancel()
@@ -94,12 +112,12 @@ namespace Quicksearch.ViewModel
         public abstract void Reset();
     }
 
-    public class CloseBehaviorSetting : Setting
+    public class MultiValueSetting<T> : Setting
     {
-        public override SettingType Type => SettingType.CloseBehavior;
+        public override SettingType Type { get; }
 
-        private CloseBehavior _Value;
-        public CloseBehavior Value
+        private T _Value;
+        public T Value
         {
             get => _Value;
             set
@@ -108,16 +126,17 @@ namespace Quicksearch.ViewModel
                 RaisePropertyChanged();
             }
         }
-        public CloseBehavior[] Values { get; }
+        public T[] Values { get; }
 
-        private Func<CloseBehavior> GetValue { get; }
-        private Action<CloseBehavior> SetValue { get; }
+        private Func<T> GetValue { get; }
+        private Action<T> SetValue { get; }
 
-        public CloseBehaviorSetting(string name, Func<CloseBehavior> getValue, Action<CloseBehavior> setValue) : base(name)
+        public MultiValueSetting(string name, Func<T> getValue, Action<T> setValue, SettingType type, T[] values) : base(name)
         {
+            this.Type = type;
             this.GetValue = getValue;
             this.SetValue = setValue;
-            this.Values = Enum.GetValues(typeof(CloseBehavior)) as CloseBehavior[];
+            this.Values = values;
             this.Reset();
         }
 
@@ -129,94 +148,7 @@ namespace Quicksearch.ViewModel
 
         public override bool HasChanged()
         {
-            return this.GetValue() != this.Value;
-        }
-
-        public override void Reset()
-        {
-            this.Value = this.GetValue();
-        }
-    }
-
-    public class CultureSetting : Setting
-    {
-
-        public override SettingType Type => SettingType.CultureInfo;
-
-        private string _Value;
-        public string Value
-        {
-            get => _Value;
-            set
-            {
-                _Value = value;
-                RaisePropertyChanged();
-            }
-        }
-        public string[] Values { get; }
-
-        private Func<string> GetValue { get; }
-        private Action<string> SetValue { get; }
-
-        public CultureSetting(string name, Func<string> getValue, Action<string> setValue) : base(name)
-        {
-            this.GetValue = getValue;
-            this.SetValue = setValue;
-            this.Values = CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c => c.Name).ToArray();
-            this.Reset();
-        }
-
-        public override void Apply()
-        {
-            this.SetValue(this.Value);
-            this.Reset();
-        }
-
-        public override bool HasChanged()
-        {
-            return this.GetValue() != this.Value;
-        }
-
-        public override void Reset()
-        {
-            this.Value = this.GetValue();
-        }
-    }
-
-    public class AutorunSetting : Setting
-    {
-        public override SettingType Type => SettingType.Autorun;
-
-        private bool _Value;
-        public bool Value
-        {
-            get => _Value;
-            set
-            {
-                _Value = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private Func<bool> GetValue { get; }
-        private Action<bool> SetValue { get; }
-        public AutorunSetting(string name, Func<bool> getValue, Action<bool> setValue) : base(name)
-        {
-            this.GetValue = getValue;
-            this.SetValue = setValue;
-            this.Reset();
-        }
-
-
-        public override void Apply()
-        {
-            this.SetValue(this.Value);
-            this.Reset();
-        }
-
-        public override bool HasChanged()
-        {
-            return this.GetValue() ^ this.Value;
+            return !this.GetValue().Equals(this.Value);
         }
 
         public override void Reset()
@@ -229,6 +161,7 @@ namespace Quicksearch.ViewModel
     {
         CloseBehavior,
         CultureInfo,
-        Autorun
+        Autorun,
+        CloseEverythingOnExit
     }
 }

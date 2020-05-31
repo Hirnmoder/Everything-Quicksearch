@@ -162,6 +162,8 @@ namespace Quicksearch
         private void App_Exit(object sender, ExitEventArgs e)
         {
             EverythingAPI.CleanUp();
+            if (this.Settings.CloseEverythingOnExit)
+                EverythingAPI.Exit();
             if (this.NotifyIcon != null)
             {
                 this.NotifyIcon.Visible = false;

@@ -28,6 +28,7 @@ namespace Quicksearch.Util
                     case SettingType.CultureInfo:
                         return CultureTemplate;
                     case SettingType.Autorun:
+                    case SettingType.CloseEverythingOnExit:
                         return CheckboxTemplate;
                     default:
                         break;
