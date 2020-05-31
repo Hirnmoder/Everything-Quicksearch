@@ -1,9 +1,10 @@
 ﻿using Quicksearch.Config;
-using Quicksearch.Properties;
+using Quicksearch.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ namespace Quicksearch.ViewModel
     {
         public List<Setting> Settings { get; }
 
+        public string LicenseNote { get; }
+
         public RelayCommand ConfirmCommand { get; }
         public RelayCommand CancelCommand { get; }
 
@@ -20,11 +23,28 @@ namespace Quicksearch.ViewModel
 
         public ConfigVM()
         {
+            this.LicenseNote = LoadLicense();
+
             this.Settings = new List<Setting>();
             AddSettings();
 
             this.ConfirmCommand = new RelayCommand(ConfirmAndSave, SomethingChanged);
             this.CancelCommand = new RelayCommand(Cancel);
+        }
+
+        private string LoadLicense()
+        {
+            try
+            {
+                var license = ResourceLoader.ReadResourceFile("LICENSE");
+                var thirdparty = ResourceLoader.ReadResourceFile("ThirdPartyLicenseNote.txt");
+
+                return license + "\n\n\n" + thirdparty;
+            }
+            catch
+            {
+                return "Unable to load license file. Check Github-Repository for license information.";
+            }
         }
 
         internal void AddSettings()

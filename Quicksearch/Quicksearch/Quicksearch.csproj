@@ -113,6 +113,7 @@
     <Compile Include="Util\FilesizeConverter.cs" />
     <Compile Include="Util\HotKey.cs" />
     <Compile Include="Util\IconConverter.cs" />
+    <Compile Include="Util\ResourceLoader.cs" />
     <Compile Include="Util\SettingTemplateSelector.cs" />
     <Compile Include="Util\Workhorse.cs" />
     <Compile Include="ViewModel\BaseVM.cs" />
@@ -162,6 +163,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\..\LICENSE">
+      <Link>LICENSE</Link>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -176,6 +180,7 @@
       <Link>Everything64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="ThirdPartyLicenseNote.txt" />
     <EmbeddedResource Include="Resources\folder.ico" />
     <EmbeddedResource Include="Resources\icon.ico" />
   </ItemGroup>
