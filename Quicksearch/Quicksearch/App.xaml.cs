@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,6 +66,9 @@ namespace Quicksearch
 
         private void LoadConfig(string[] args)
         {
+            // If program runs on windows startup the CurrentDirectory is %windir%\system32
+            // So we reset it to the directory that contains the executable
+            Environment.CurrentDirectory = new FileInfo(typeof(App).Assembly.Location).DirectoryName;
             try
             {
                 this.Settings = UserSettings.Load(SettingsPath);
