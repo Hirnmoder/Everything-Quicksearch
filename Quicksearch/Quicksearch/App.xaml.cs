@@ -47,6 +47,9 @@ namespace Quicksearch
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            ApplicationInstanceWatcher.ShutdownRequest += () => this.Dispatcher.Invoke(() => this.Shutdown());
+            ApplicationInstanceWatcher.CreatePipeAndShutdownOtherInstances();
+
             LoadConfig(e.Args);
 
             var culture = new CultureInfo(this.Settings.UICulture);
@@ -59,7 +62,7 @@ namespace Quicksearch
             this.SearchVM = new MainVM();
             this.ConfigVM = new ConfigVM();
 
-            if(!this.Settings.Silent)
+            if (!this.Settings.Silent)
                 OpenWindow();
             ShowTrayIcon();
         }
@@ -104,7 +107,7 @@ namespace Quicksearch
                 this.Settings.Save(SettingsPath);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.ToString());
                 return false;
@@ -165,6 +168,7 @@ namespace Quicksearch
 
         private void App_Exit(object sender, ExitEventArgs e)
         {
+            ApplicationInstanceWatcher.Exit();
             EverythingAPI.CleanUp();
             if (this.Settings.CloseEverythingOnExit)
                 EverythingAPI.Exit();
@@ -189,7 +193,7 @@ namespace Quicksearch
                 this.ConfigWindow.DataContext = this.ConfigVM;
                 this.ConfigVM.CloseAction = () => this.ConfigWindow.Close();
             }
-            else if(!ConfigWindow.IsVisible)
+            else if (!ConfigWindow.IsVisible)
             {
                 this.ConfigVM.AddSettings();
             }

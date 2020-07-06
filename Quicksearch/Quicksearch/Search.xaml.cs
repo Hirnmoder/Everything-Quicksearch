@@ -43,7 +43,7 @@ namespace Quicksearch
             this.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
-        private void Search_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void Search_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {

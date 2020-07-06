@@ -17,7 +17,7 @@
                   WindowStartupLocation="CenterScreen"
                   FocusManager.FocusedElement="{Binding ElementName=tbSearch}"
                   SizeToContent="Height"
-                  PreviewKeyDown="Search_PreviewKeyDown"
+                  PreviewKeyUp="Search_PreviewKeyUp"
                   Deactivated="Search_Deactivated">
     <fw:AcrylicWindow.TitleBar>
         <Grid>

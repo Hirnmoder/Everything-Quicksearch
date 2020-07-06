@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Config\CloseBehavior.cs" />
     <Compile Include="Config\UserSettings.cs" />
+    <Compile Include="Util\ApplicationInstanceWatcher.cs" />
     <Compile Include="Util\FiledateConverter.cs" />
     <Compile Include="Util\FilesizeConverter.cs" />
     <Compile Include="Util\HotKey.cs" />
