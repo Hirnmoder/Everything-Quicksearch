@@ -20,9 +20,6 @@ using System.Xml;
 
 namespace Quicksearch
 {
-    /// <summary>
-    /// Interaktionslogik für "App.xaml"
-    /// </summary>
     public partial class App : Application
     {
         private HotKey OpenWindowHotkey, CloseApplicationHotkey;
@@ -41,6 +38,7 @@ namespace Quicksearch
             OpenWindowHotkey = new HotKey(System.Windows.Input.Key.Y, KeyModifier.Win, OpenWindowHotkeyHandler);
             CloseApplicationHotkey = new HotKey(System.Windows.Input.Key.Y, KeyModifier.Win | KeyModifier.Shift, CloseApplicationHotkeyHandler);
             this.Exit += App_Exit;
+            this.SessionEnding += App_SessionEnding;
         }
 
         public new static App Current { get; private set; }
@@ -182,6 +180,18 @@ namespace Quicksearch
             this.OpenWindowHotkey = null;
             this.CloseApplicationHotkey?.Dispose();
             this.CloseApplicationHotkey = null;
+        }
+
+        private void App_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        {
+            if(e.ReasonSessionEnding == ReasonSessionEnding.Logoff
+                || e.ReasonSessionEnding == ReasonSessionEnding.Shutdown)
+            {
+                // Cancel to give us more time
+                e.Cancel = true;
+                // Shutdown to avoid crash of Everything
+                Shutdown();
+            }
         }
 
         public void OpenSettings()

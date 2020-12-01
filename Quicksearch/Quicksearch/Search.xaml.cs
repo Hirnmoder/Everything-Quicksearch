@@ -25,6 +25,7 @@ namespace Quicksearch
     public partial class Search : AcrylicWindow
     {
         private bool IsClosing = false;
+        private double ScrolledValue = 0.0;
 
         private MainVM VM { get; }
         public Search(MainVM searchVM)
@@ -57,6 +58,13 @@ namespace Quicksearch
                     if (App.Current.Settings.CloseBehavior == Config.CloseBehavior.CloseOnRun)
                         this.Close();
                     break;
+            }
+        }
+
+        private void Search_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
                 case Key.PageUp:
                 case Key.Up:
                     e.Handled = true;
@@ -68,6 +76,21 @@ namespace Quicksearch
                     e.Handled = true;
                     VM.SelectNext();
                     break;
+            }
+        }
+
+        private void Search_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            this.ScrolledValue += e.Delta / 120.0;
+            if (this.ScrolledValue >= 1.0)
+            {
+                this.ScrolledValue -= 1.0;
+                VM.SelectPrevious();
+            }
+            else if (this.ScrolledValue <= -1.0)
+            {
+                this.ScrolledValue += 1.0;
+                VM.SelectNext();
             }
         }
 
@@ -113,5 +136,6 @@ namespace Quicksearch
                     break;
             }
         }
+
     }
 }

@@ -18,6 +18,8 @@
                   FocusManager.FocusedElement="{Binding ElementName=tbSearch}"
                   SizeToContent="Height"
                   PreviewKeyUp="Search_PreviewKeyUp"
+                  PreviewKeyDown="Search_PreviewKeyDown"
+                  PreviewMouseWheel="Search_PreviewMouseWheel"
                   Deactivated="Search_Deactivated">
     <fw:AcrylicWindow.TitleBar>
         <Grid>
