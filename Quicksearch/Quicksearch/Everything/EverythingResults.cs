@@ -95,11 +95,14 @@ namespace Quicksearch.Everything
         }
     }
 
+    [Flags]
     public enum EverythingResultType
     {
-        None,
-        File,
-        Folder,
-        Volume
+        None = 0,
+        File = 1 << 0,
+        Folder = 1 << 2,
+        Volume = 1 << 3,
+
+        All = File | Folder | Volume
     }
 }

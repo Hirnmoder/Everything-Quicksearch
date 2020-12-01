@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quicksearch.Everything
 {
@@ -23,6 +19,29 @@ namespace Quicksearch.Everything
 
         internal EverythingQuery(string search, Data data, Sort sort, bool matchPath, bool matchWholeWord, bool matchCase, uint resultCount, uint resultOffset)
         {
+            var resultTypes = EverythingResultType.None;
+            var sLower = search.ToLower();
+            if (sLower.Contains("#f") && !sLower.Contains("\"#f\""))
+            {
+                resultTypes |= EverythingResultType.File;
+                search = search.Replace("#f", "").Replace("#F", "");
+            }
+            if (sLower.Contains("#d") && !sLower.Contains("\"#d\""))
+            {
+                resultTypes |= EverythingResultType.Folder;
+                search = search.Replace("#d", "").Replace("#D", "");
+            }
+
+            if(resultTypes == EverythingResultType.File)
+            {
+                search = "file:" + search;
+            }
+            else if(resultTypes == EverythingResultType.Folder)
+            {
+                search = "folder:" + search;
+            }
+
+
             this.Search = search;
             this.Data = data;
             this.Sort = sort;
@@ -52,8 +71,6 @@ namespace Quicksearch.Everything
                 {
                     Executed = true;
                     this.QueryStats = new EverythingQueryStats(EverythingAPI.GetTotResults(),
-                        EverythingAPI.GetTotFileResults(),
-                        EverythingAPI.GetTotFolderResults(),
                         (Data)EverythingAPI.GetResultListRequestFlags());
                     return true;
                 }
@@ -75,15 +92,11 @@ namespace Quicksearch.Everything
     {
         internal Data ReceivedData { get; }
         internal uint ResultCount { get; }
-        internal uint FileCount { get; }
-        internal uint FolderCount { get; }
 
-        internal EverythingQueryStats(uint resultCount, uint fileCount, uint folderCount, Data receivedData)
+        internal EverythingQueryStats(uint resultCount, Data receivedData)
         {
             this.ReceivedData = receivedData;
             this.ResultCount = resultCount;
-            this.FileCount = fileCount;
-            this.FolderCount = folderCount;
         }
     }
 }
